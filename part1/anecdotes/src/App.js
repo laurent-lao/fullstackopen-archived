@@ -38,9 +38,9 @@ const App = () => {
       if (value > max) {
         max = value
         maxIndex = index
+        console.log('max: ', max, 'maxIndex: ', maxIndex)
       }
     })
-
     return maxIndex
   }
 
