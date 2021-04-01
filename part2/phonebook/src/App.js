@@ -6,6 +6,15 @@ const Debug = ({label, value}) => {
   )
 }
 
+const ListPeople = ({people}) => {
+  return (
+    <div>
+      {people.map(person => 
+        <li key={person.id}>{person.name}</li>)}
+    </div>
+  )
+}
+
 const App = () => {
   const [ persons, setPersons ] = useState([
     { name: 'Arto Hellas' }
@@ -24,7 +33,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      ...
+      <ListPeople people={persons} />
     </div>
   )
 }
