@@ -10,7 +10,8 @@ const ListPeople = ({people}) => {
   return (
     <div>
       {people.map(person => 
-        <li key={person.id}>{person.name}</li>)}
+        <li key={person.name}>{person.name}</li>
+      )}
     </div>
   )
 }
