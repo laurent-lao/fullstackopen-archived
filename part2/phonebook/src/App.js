@@ -1,12 +1,39 @@
 import React, { useState } from "react";
 
-const Debug = ({ label, value }) => {
+
+// const Debug = ({ label, value }) => {
+//   return (
+//     <div>
+//       DEBUG: {label}={value}
+//     </div>
+//   );
+// };
+
+const Filter = ({ filterTerm, handleFilterChange }) => {
   return (
-    <div>
-      DEBUG: {label}={value}
-    </div>
+    <form>
+      <div>
+        filter shown with <input value={filterTerm} onChange={handleFilterChange}/>
+      </div>
+    </form>
   );
-};
+}
+
+const PersonForm = ({ addPerson, newName, handleNameChange, newNumber, handleNumberChange }) => {
+  return (
+    <form onSubmit={addPerson}>
+        <div>
+          name: <input value={newName} onChange={handleNameChange} />
+        </div>
+        <div>
+          number: <input value={newNumber} onChange={handleNumberChange} />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+  )
+}
 
 const ListPeople = ({ people }) => {
   return (
@@ -27,7 +54,6 @@ const App = () => {
   ])
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
-  const [showAll, setShowAll] = useState(true);
   const [filterTerm, setFilterTerm] = useState("");
 
   const addPerson = (event) => {
@@ -59,28 +85,18 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const personsToShow = filterTerm === '' ? persons : 
+    persons.filter(people => 
+      (people.name.toLowerCase().includes(filterTerm) || people.number.includes(filterTerm)))
+
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
-        <div>
-          filter shown with <input value={filterTerm} onChange={handleFilterChange}/>
-        </div>
-      </form>
+      <Filter filterTerm={filterTerm} handleFilterChange={handleFilterChange} />
       <h2>add a new</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <h2>Numbers</h2>
-      <ListPeople people={persons} />
+      <ListPeople people={personsToShow} />
     </div>
   );
 };
