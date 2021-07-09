@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios'
-import Filter from "./components/Filter";
-import PersonForm from "./components/PersonForm";
-import Persons from "./components/Persons";
+
 
 // const Debug = ({ label, value }) => {
 //   return (
@@ -12,13 +10,47 @@ import Persons from "./components/Persons";
 //   );
 // };
 
+const Filter = ({ filterTerm, handleFilterChange }) => {
+  return (
+    <form>
+      <div>
+        filter shown with <input value={filterTerm} onChange={handleFilterChange}/>
+      </div>
+    </form>
+  );
+}
+
+const PersonForm = ({ addPerson, newName, handleNameChange, newNumber, handleNumberChange }) => {
+  return (
+    <form onSubmit={addPerson}>
+        <div>
+          name: <input value={newName} onChange={handleNameChange} />
+        </div>
+        <div>
+          number: <input value={newNumber} onChange={handleNumberChange} />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+  )
+}
+
+const ListPeople = ({ people }) => {
+  return (
+    <div>
+      {people.map((person) => (
+        <li key={person.name}>{person.name} {person.number}</li>
+      ))}
+    </div>
+  );
+};
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
-  
   const [filterTerm, setFilterTerm] = useState("");
-  const [filterPersons, setFilterPersons] = useState(persons)
 
   const personHook = () => {
     axios
@@ -48,9 +80,6 @@ const App = () => {
 
   const handleFilterChange = (event) => {
     setFilterTerm(event.target.value)
-    setFilterPersons(persons.filter((person => 
-      (person.name.toLowerCase().includes(event.target.value.toLowerCase()) || person.number.includes(event.target.value))
-    )))
   }
   
   const handleNameChange = (event) => {
@@ -61,24 +90,18 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
-  const addPersonData = {
-    newName,
-    handleNameChange,
-    newNumber,
-    handleNumberChange
-  }
-
-  const ListPersons = filterTerm === '' ? 
-    <Persons people={persons} /> : <Persons people={filterPersons} />
+  const personsToShow = filterTerm === '' ? persons : 
+    persons.filter(people => 
+      (people.name.toLowerCase().includes(filterTerm) || people.number.includes(filterTerm)))
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter value={filterTerm} onChange={handleFilterChange} />
+      <Filter filterTerm={filterTerm} handleFilterChange={handleFilterChange} />
       <h2>add a new</h2>
-      <PersonForm addPerson={addPerson} data={addPersonData} />
+      <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <h2>Numbers</h2>
-      { ListPersons }
+      <ListPeople people={personsToShow} />
     </div>
   );
 };
