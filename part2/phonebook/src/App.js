@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios'
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import personService from "./services/person";
 
 // const Debug = ({ label, value }) => {
 //   return (
@@ -19,12 +19,12 @@ const App = () => {
   
   const [filterTerm, setFilterTerm] = useState("");
   const [filterPersons, setFilterPersons] = useState(persons)
-
+  
   const personHook = () => {
-    axios
-    .get('http://localhost:3001/persons')
-    .then(response => {
-      setPersons(response.data)
+   personService
+    .getAll() 
+    .then(initialNotes => {
+      setPersons(initialNotes)
     })
   }
   useEffect(personHook, [])
@@ -36,14 +36,31 @@ const App = () => {
       number: newNumber,
       id: persons.length + 1
     }
-    const isPersonAlreadyExists = persons.find(person => person.name === personObject.name)
+    const duplicatePerson = persons.find(person => person.name === personObject.name)
 
-    if (!isPersonAlreadyExists) {
-      setPersons(persons.concat(personObject))  // Satisfies "Never mutate state directly"
-      setNewName('')
-    } else {
-      window.alert(`${newName} is already added to phonebook`)
+    if (!duplicatePerson) {
+     personService
+      .create(personObject) 
+      .then(returnedNote => {
+        setPersons(persons.concat(returnedNote))  // Satisfies "Never mutate state directly"
+      })
     }
+    else {
+      const isConfirmed = window.confirm(`${personObject.name} is already added to phonebook, replace the old number with a new one?`)
+
+      if (isConfirmed) {
+        personService
+          .update(duplicatePerson.id, personObject)
+          .then(returnedPerson => {
+            setPersons(persons.map(person => person.name !== personObject.name ? person : returnedPerson))
+          })
+
+      }
+    }
+
+    // Reset fields
+    setNewName('')
+    setNewNumber('')
   }
 
   const handleFilterChange = (event) => {
@@ -69,7 +86,7 @@ const App = () => {
   }
 
   const ListPersons = filterTerm === '' ? 
-    <Persons people={persons} /> : <Persons people={filterPersons} />
+    <Persons persons={persons} setPersons={setPersons} /> : <Persons persons={filterPersons} setPersons={setPersons} />
 
   return (
     <div>
