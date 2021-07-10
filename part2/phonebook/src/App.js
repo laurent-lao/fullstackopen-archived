@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import Notification from "./components/Notification";
 import personService from "./services/person";
 
 // const Debug = ({ label, value }) => {
@@ -16,19 +17,20 @@ const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
-  
+  const [errorMessage, setErrorMessage] = useState("test");
+  const [isError, setIsError] = useState(true);
   const [filterTerm, setFilterTerm] = useState("");
   const [filterPersons, setFilterPersons] = useState(persons)
-  
-  const personHook = () => {
-   personService
-    .getAll() 
-    .then(initialNotes => {
-      setPersons(initialNotes)
-    })
+
+
+  const showNotification = (message, isAnError) => {
+    setIsError(isAnError)
+    setErrorMessage(message);
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 3000)
   }
-  useEffect(personHook, [])
-  
+
   const addPerson = (event) => {
     event.preventDefault()
     const personObject = {
@@ -38,12 +40,17 @@ const App = () => {
     }
     const duplicatePerson = persons.find(person => person.name === personObject.name)
 
+
+
+
     if (!duplicatePerson) {
-     personService
-      .create(personObject) 
-      .then(returnedNote => {
-        setPersons(persons.concat(returnedNote))  // Satisfies "Never mutate state directly"
-      })
+      personService
+        .create(personObject)
+        .then(returnedNote => {
+          setPersons(persons.concat(returnedNote))  // Satisfies "Never mutate state directly"
+          //setNotification(`Added ${personObject.name}`, false)
+          showNotification('lol', false)
+        })
     }
     else {
       const isConfirmed = window.confirm(`${personObject.name} is already added to phonebook, replace the old number with a new one?`)
@@ -53,6 +60,7 @@ const App = () => {
           .update(duplicatePerson.id, personObject)
           .then(returnedPerson => {
             setPersons(persons.map(person => person.name !== personObject.name ? person : returnedPerson))
+            showNotification(`Replaced ${duplicatePerson.name}`, false)
           })
 
       }
@@ -65,11 +73,11 @@ const App = () => {
 
   const handleFilterChange = (event) => {
     setFilterTerm(event.target.value)
-    setFilterPersons(persons.filter((person => 
+    setFilterPersons(persons.filter((person =>
       (person.name.toLowerCase().includes(event.target.value.toLowerCase()) || person.number.includes(event.target.value))
     )))
   }
-  
+
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
@@ -85,17 +93,38 @@ const App = () => {
     handleNumberChange
   }
 
-  const ListPersons = filterTerm === '' ? 
-    <Persons persons={persons} setPersons={setPersons} /> : <Persons persons={filterPersons} setPersons={setPersons} />
+  const notificationData = {
+    message: errorMessage,
+    setMessage: setErrorMessage,
+    isError: isError,
+    setIsError: setIsError
+  }
+
+  const personHook = () => {
+    personService
+      .getAll()
+      .then(initialNotes => {
+        setPersons(initialNotes)
+      })
+  }
+
+  // Initialization
+  useEffect(personHook, [])
+
+  // Tag logic
+  const ListPersons = filterTerm === '' ?
+    <Persons persons={persons} setPersons={setPersons} showNotification={showNotification} />
+    : <Persons persons={filterPersons} setPersons={setPersons} showNotification={showNotification} />
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification data={notificationData} />
       <Filter value={filterTerm} onChange={handleFilterChange} />
       <h2>add a new</h2>
       <PersonForm addPerson={addPerson} data={addPersonData} />
       <h2>Numbers</h2>
-      { ListPersons }
+      {ListPersons}
     </div>
   );
 };
