@@ -17,7 +17,7 @@ const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
-  const [errorMessage, setErrorMessage] = useState("test");
+  const [errorMessage, setErrorMessage] = useState("");
   const [isError, setIsError] = useState(true);
   const [filterTerm, setFilterTerm] = useState("");
   const [filterPersons, setFilterPersons] = useState(persons)
@@ -40,16 +40,12 @@ const App = () => {
     }
     const duplicatePerson = persons.find(person => person.name === personObject.name)
 
-
-
-
     if (!duplicatePerson) {
       personService
         .create(personObject)
         .then(returnedNote => {
           setPersons(persons.concat(returnedNote))  // Satisfies "Never mutate state directly"
-          //setNotification(`Added ${personObject.name}`, false)
-          showNotification('lol', false)
+          showNotification(`Added ${personObject.name}`, false)
         })
     }
     else {

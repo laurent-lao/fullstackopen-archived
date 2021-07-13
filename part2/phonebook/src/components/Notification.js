@@ -4,7 +4,7 @@ const Notification = ({data}) => {
     const message = data.message
     const isError = data.isError
     
-  if (message === null) {
+  if (message === null || message === "") {
     return null
   }
 
