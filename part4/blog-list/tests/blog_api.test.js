@@ -40,8 +40,10 @@ describe('when there are initially some blogs saved', () => {
 
   test('there are six blogs', async () => {
     const response = await api.get('/api/blogs')
+    const blogsAtStart = await helper.blogsInDb()
 
     expect(response.body).toHaveLength(6)
+    expect(blogsAtStart).toHaveLength(6)
   })
 
   test('blogs have property \'id\'', async () => {
@@ -50,6 +52,47 @@ describe('when there are initially some blogs saved', () => {
     response.body.map((item) => expect(item.id).toBeDefined())
   })
 })
+
+describe('addition of a blog', () => {
+  test('succeeds with valid data', async () => {
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Test Author',
+      url: 'http://testurl.com/',
+      likes: 2,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+
+    const titles = response.body.map((item) => item.title)
+
+    expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
+    expect(titles).toContain(
+      'Test Blog',
+    )
+  })
+})
+// describe('viewing a specific blog', () => {
+//   test('succeeds with a valid id', async () => {
+//     const blogsAtStart = await helper.blogsInDb()
+//     const blogToView = blogsAtStart[0]
+
+//     const resultBlog = await api
+//       .get(`/api/blogs/${blogToView.id}`)
+//       .expect(200)
+//       .expect('Content-Type', /application\/json/)
+
+//     const processedBlogToView = JSON.parse(JSON.stringify(blogToView))
+
+//     expect(resultBlog.body).toEqual(processedBlogToView)
+//   })
+// })
 
 afterAll(() => {
   mongoose.connection.close()
