@@ -30,7 +30,7 @@ describe('total likes', () => {
   })
 })
 
-describe('Most liked blog', () => {
+describe('most liked blog', () => {
   // Clone sample arrays
   const listWithNoBlogs = [...sampleBlogs.listWithNoBlogs]
   const listWithOneBlog = [...sampleBlogs.listWithOneBlog]
@@ -49,5 +49,31 @@ describe('Most liked blog', () => {
   test('when list has many blogs, return most liked', () => {
     const result = listHelper.favoriteBlog(listWithManyBlogs)
     expect(result).toEqual(listWithManyBlogs[2])
+  })
+})
+
+describe('author with most blogs', () => {
+  // Clone sample arrays
+  const listWithNoblogs = [...sampleBlogs.listWithNoBlogs]
+  const listWithOneBlog = [...sampleBlogs.listWithOneBlog]
+
+  test('when list is empty, return null', () => {
+    const result = listHelper.mostBlogs(listWithNoblogs)
+    expect(result).toBe(null)
+  })
+  test('when list has only one blog, return that one\'s information', () => {
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      blogs: 1,
+    })
+  })
+
+  test('when list has many blogs, return most prolific info', () => {
+    const result = listHelper.mostBlogs(sampleBlogs.listWithManyBlogs)
+    expect(result).toEqual({
+      author: 'Robert C. Martin',
+      blogs: 3,
+    })
   })
 })

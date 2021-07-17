@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest --verbose",
+    "test": "npm run lint && npm run test:jest",
+    "test:jest": "jest --verbose",
     "dev": "nodemon index.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "author": "Laurent Lao",
   "license": "MIT",
@@ -15,6 +17,7 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "lodash": "^4.17.21",
     "mongoose": "^5.13.3"
   },
   "devDependencies": {
