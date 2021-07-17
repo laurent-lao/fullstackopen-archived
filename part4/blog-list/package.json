@@ -4,10 +4,9 @@
   "description": "FSO Blog list",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "npm run lint && npm run test:jest",
-    "test:jest": "jest --verbose",
-    "dev": "nodemon index.js",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -21,6 +20,7 @@
     "mongoose": "^5.13.3"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "eslint": "^7.30.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.23.4",
