@@ -9,18 +9,18 @@ const api = supertest(app)
 beforeEach(async () => {
   await Blog.deleteMany({})
 
-  // One By One
-  // let blogObject = new Blog(helper.initialBlogs[0])
-  // await blogObject.save()
-  // blogObject = new Blog(helper.initialBlogs[1])
-  // await blogObject.save()
-
   // Parallel
   const blogObjects = helper.initialBlogs
     .map((blog) => new Blog(blog))
   const promiseArray = blogObjects
     .map((note) => note.save())
   await Promise.all(promiseArray)
+
+  // One By One
+  // let blogObject = new Blog(helper.initialBlogs[0])
+  // await blogObject.save()
+  // blogObject = new Blog(helper.initialBlogs[1])
+  // await blogObject.save()
 
   // Sequentially FORCE ORDER (forEach does not work well in async)
   // for (let blog of helper.initialBlogs) {
