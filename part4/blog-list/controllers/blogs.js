@@ -18,8 +18,12 @@ blogsRouter.post('/', async (request, response, next) => {
     likes: body.likes || 0,
   })
 
+  try {
   const savedBlog = await blog.save()
   response.json(savedBlog)
+  } catch(exception) {
+    next(exception)
+  }
 })
 
 // ========= By Promises ============

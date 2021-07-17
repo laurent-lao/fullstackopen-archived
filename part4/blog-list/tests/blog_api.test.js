@@ -90,8 +90,21 @@ describe('addition of a blog', () => {
       .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await helper.blogsInDb()
-    console.log(blogsAtEnd)
     blogsAtEnd.map((blog) => expect(blog.likes).toBeDefined())
+  })
+  test('fails when missing title and url', async () => {
+    const newBlog = {
+      author: 'Test Author',
+      likes: 2,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
   })
 })
 // describe('viewing a specific blog', () => {
