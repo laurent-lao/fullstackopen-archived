@@ -68,14 +68,30 @@ describe('addition of a blog', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    const response = await api.get('/api/blogs')
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
-    const titles = response.body.map((item) => item.title)
-
-    expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
+    const titles = blogsAtEnd.map((blog) => blog.title)
     expect(titles).toContain(
       'Test Blog',
     )
+  })
+  test('succeeds even with missing likes', async () => {
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Test Author',
+      url: 'http://testurl.com/',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    console.log(blogsAtEnd)
+    blogsAtEnd.map((blog) => expect(blog.likes).toBeDefined())
   })
 })
 // describe('viewing a specific blog', () => {
