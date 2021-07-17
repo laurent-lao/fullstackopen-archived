@@ -2,16 +2,31 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
-const sampleBlogs = require('./sampleBlogs')
+const helper = require('./test_helper')
 
 const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  let blogObject = new Blog(sampleBlogs.listWithManyBlogs[0])
-  await blogObject.save()
-  blogObject = new Blog(sampleBlogs.listWithManyBlogs[1])
-  await blogObject.save()
+
+  // One By One
+  // let blogObject = new Blog(helper.initialBlogs[0])
+  // await blogObject.save()
+  // blogObject = new Blog(helper.initialBlogs[1])
+  // await blogObject.save()
+
+  // Parallel
+  const blogObjects = helper.initialBlogs
+    .map((blog) => new Blog(blog))
+  const promiseArray = blogObjects
+    .map((note) => note.save())
+  await Promise.all(promiseArray)
+
+  // Sequentially FORCE ORDER (forEach does not work well in async)
+  // for (let blog of helper.initialBlogs) {
+  //   let blogObject = new Blog(blog)
+  //   await blogObject.save()
+  // }
 })
 
 test('blogs are returned as json', async () => {
@@ -21,10 +36,10 @@ test('blogs are returned as json', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
-test('there are two blogs', async () => {
+test('there are six blogs', async () => {
   const response = await api.get('/api/blogs')
 
-  expect(response.body).toHaveLength(2)
+  expect(response.body).toHaveLength(6)
 })
 
 afterAll(() => {
