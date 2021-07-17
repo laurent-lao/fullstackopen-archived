@@ -14,7 +14,15 @@ const totalLikes = (blogs) => {
 }
 
 const favoriteBlog = (blogs) => {
-  return blogs[0]
+  if (!blogs || blogs.length === 0) return null
+
+  const whichMostLike = (prevItem, currentItem) => {
+    return currentItem.likes < prevItem.likes
+      ? prevItem
+      : currentItem
+  }
+
+  return blogs.reduce(whichMostLike)
 }
 
 module.exports = {

@@ -32,12 +32,22 @@ describe('total likes', () => {
 
 describe('Most liked blog', () => {
   // Clone sample arrays
+  const listWithNoBlogs = [...sampleBlogs.listWithNoBlogs]
   const listWithOneBlog = [...sampleBlogs.listWithOneBlog]
-  // const listWithManyBlogs = [...sampleBlogs.listWithManyBlogs]
+  const listWithManyBlogs = [...sampleBlogs.listWithManyBlogs]
+
+  test('when list is empty, return null', () => {
+    const result = listHelper.favoriteBlog(listWithNoBlogs)
+    expect(result).toBe(null)
+  })
 
   test('when list has only one blog, return that', () => {
     const result = listHelper.favoriteBlog(listWithOneBlog)
-
     expect(result).toEqual(listWithOneBlog[0])
+  })
+
+  test('when list has many blogs, return most liked', () => {
+    const result = listHelper.favoriteBlog(listWithManyBlogs)
+    expect(result).toEqual(listWithManyBlogs[2])
   })
 })
