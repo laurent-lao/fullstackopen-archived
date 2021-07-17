@@ -27,21 +27,37 @@ const favoriteBlog = (blogs) => {
       : currentItem
   }
 
-  return blogs.reduce(whichMostLike)
+  const mostLikedBlog = blogs.reduce(whichMostLike)
+
+  const favoriteBlogInfo = {
+    title: mostLikedBlog.title,
+    author: mostLikedBlog.author,
+    likes: mostLikedBlog.likes,
+  }
+
+  return favoriteBlogInfo
 }
 
 const mostBlogs = (blogs) => {
   if (!blogs || blogs.length === 0) return null
 
-  // Last Index has most blogs (uses lodash)
+  // Count blogs per author
   const authorsByBlogCountObj = _.countBy(blogs, 'author')
   const authorsByBlogCountKeys = _.keys(authorsByBlogCountObj)
   const authorsByBlogCountValues = _.values(authorsByBlogCountObj)
-  const lastIndex = authorsByBlogCountKeys.length - 1
+
+  const whichMostBlog = (prevItem, currentItem) => {
+    return currentItem < prevItem
+      ? prevItem
+      : currentItem
+  }
+
+  const mostBlogCount = authorsByBlogCountValues.reduce(whichMostBlog)
+  const mostBlogAuthor = authorsByBlogCountKeys[_.indexOf(authorsByBlogCountValues, mostBlogCount)]
 
   const mostBlogsInfo = {
-    author: authorsByBlogCountKeys[lastIndex],
-    blogs: authorsByBlogCountValues[lastIndex],
+    author: mostBlogAuthor,
+    blogs: mostBlogCount,
   }
 
   return mostBlogsInfo

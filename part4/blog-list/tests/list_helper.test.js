@@ -43,12 +43,20 @@ describe('most liked blog', () => {
 
   test('when list has only one blog, return that', () => {
     const result = listHelper.favoriteBlog(listWithOneBlog)
-    expect(result).toEqual(listWithOneBlog[0])
+    expect(result).toEqual({
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      likes: 5,
+    })
   })
 
   test('when list has many blogs, return most liked', () => {
     const result = listHelper.favoriteBlog(listWithManyBlogs)
-    expect(result).toEqual(listWithManyBlogs[2])
+    expect(result).toEqual({
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      likes: 12,
+    })
   })
 })
 
