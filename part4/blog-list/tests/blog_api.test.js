@@ -167,9 +167,9 @@ describe('update of a blog', () => {
     const blogToUpdate = blogsAtStart[0]
 
     const newBlog = {
-      title: blogToUpdate.title,
-      author: blogToUpdate.author,
-      url: blogToUpdate.url,
+      // title: blogToUpdate.title,
+      // author: blogToUpdate.author,
+      // url: blogToUpdate.url,
       likes: blogToUpdate.likes + 1,
     }
 
@@ -185,8 +185,7 @@ describe('update of a blog', () => {
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
 
-    const authors = blogsAtEnd.map((blog) => blog.author)
-    expect(authors).toContain(blogToUpdate.author)
+    expect(resultBlog.body.author).toEqual(processedBlogToUpdate.author)
   })
 })
 

@@ -10,6 +10,7 @@ const errorHandler = (error, request, response, next) => {
   }
 
   next(error)
+  return null // lint happy
 }
 
 module.exports = {
