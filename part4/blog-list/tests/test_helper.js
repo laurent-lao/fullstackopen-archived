@@ -5,7 +5,6 @@ const sampleBlogs = require('./sampleBlogs')
 
 const initialBlogs = [...sampleBlogs.listWithManyBlogs]
 
-
 const nonExistingId = async () => {
   const blog = new Blog({ title: 'willremovethissoon', url: 'http://thisistemporary.com' })
   await blog.save()
