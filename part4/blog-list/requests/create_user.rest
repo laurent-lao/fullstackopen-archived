@@ -5,8 +5,11 @@ POST http://localhost:3003/api/users/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "notes": [],
+    "blogs": [],
     "username": "root",
     "name": "Superuser",
     "password": "salainen"
 }
+
+###
+DELETE http://localhost:3003/api/users/60f3d3e5da6664a92ca9fbfd

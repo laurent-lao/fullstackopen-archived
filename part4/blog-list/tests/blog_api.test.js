@@ -1,7 +1,9 @@
+const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 
 const api = supertest(app)
@@ -86,12 +88,23 @@ describe('viewing a specific blog', () => {
 })
 
 describe('addition of a blog', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
+
+    await user.save()
+  })
   test('succeeds with valid data', async () => {
+    const testUser = await helper.firstUser()
+
     const newBlog = {
       title: 'Test Blog',
       author: 'Test Author',
       url: 'http://testurl.com/',
       likes: 2,
+      userId: testUser.id,
     }
 
     await api
@@ -109,10 +122,13 @@ describe('addition of a blog', () => {
     )
   })
   test('succeeds even with missing likes', async () => {
+    const testUser = await helper.firstUser()
+
     const newBlog = {
       title: 'Test Blog',
       author: 'Test Author',
       url: 'http://testurl.com/',
+      userId: testUser.id,
     }
 
     await api
@@ -125,9 +141,12 @@ describe('addition of a blog', () => {
     blogsAtEnd.map((blog) => expect(blog.likes).toBeDefined())
   })
   test('fails when missing title and url', async () => {
+    const testUser = await helper.firstUser()
+
     const newBlog = {
       author: 'Test Author',
       likes: 2,
+      userId: testUser.id,
     }
 
     await api

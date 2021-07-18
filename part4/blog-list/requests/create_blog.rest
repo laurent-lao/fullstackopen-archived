@@ -8,5 +8,18 @@ Content-Type: application/json
   "title": "Test Blog",
   "author": "Test User",
   "url": "http://testurl.com/",
-  "likes": "11"
+  "likes": "11",
+  "userId": "60f3d4f9b48421aa69aa749f"
+}
+
+### 
+POST http://localhost:3003/api/blogs/ HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Second Test Blog",
+  "author": "Test User",
+  "url": "http://secondtesturl.com/",
+  "likes": "12",
+  "userId": "60f3d4f9b48421aa69aa749f"
 }

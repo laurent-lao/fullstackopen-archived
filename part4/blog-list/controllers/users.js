@@ -32,4 +32,11 @@ usersRouter.post('/', async (request, response) => {
   response.json(savedUser)
 })
 
+// Delete one user
+usersRouter.delete('/:id', async (request, response) => {
+  await User.findByIdAndRemove(request.params.id)
+
+  response.status(204).end()
+})
+
 module.exports = usersRouter
