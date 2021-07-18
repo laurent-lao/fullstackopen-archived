@@ -8,9 +8,15 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     unique: true,
+    minLength: 3,
+    required: true,
   },
   name: String,
-  passwordHash: String,
+  passwordHash: {
+    // validator for password in ../controllers/users.js
+    type: String,
+    required: true,
+  },
   notes: [
     {
       type: mongoose.Schema.Types.ObjectId,
