@@ -91,8 +91,12 @@ describe('addition of a blog', () => {
   beforeEach(async () => {
     await User.deleteMany({})
 
-    const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({ username: 'root', passwordHash })
+    const passwordHash = await bcrypt.hash(helper.testUser.password, 10)
+    const user = new User({ 
+      username: helper.testUser.username,
+      name: helper.testUser.name,
+      passwordHash,
+    })
 
     await user.save()
   })
@@ -120,6 +124,19 @@ describe('addition of a blog', () => {
     expect(titles).toContain(
       'Test Blog',
     )
+
+    const getPopulatedFields = async () => {
+      const response = await api.get('/api/blogs')
+      const allBlogs = response.body
+      const lastAddedBlog = allBlogs[allBlogs.length - 1]
+
+      return lastAddedBlog.user
+    }
+
+    const shouldBePopulated = await getPopulatedFields()
+
+    expect(shouldBePopulated.name).toEqual(helper.testUser.name)
+    expect(shouldBePopulated.user).toEqual(helper.testUser.user)
   })
   test('succeeds even with missing likes', async () => {
     const testUser = await helper.firstUser()

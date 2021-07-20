@@ -11,8 +11,8 @@ describe('when there is initially one user in db', () => {
   beforeEach(async () => {
     await User.deleteMany({})
 
-    const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({ username: 'root', passwordHash })
+    const passwordHash = await bcrypt.hash(helper.testUser.password, 10)
+    const user = new User({ username: helper.testUser.username, passwordHash })
 
     await user.save()
   })
@@ -38,6 +38,23 @@ describe('when there is initially one user in db', () => {
     const usernames = usersAtEnd.map((u) => u.username)
     expect(usernames).toContain(newUser.username)
   })
+  // TODO
+  // test('blogs can be attached and field is populated', async () => {
+  //   const usersAtStart = await helper.usersInDb()
+
+  //   // use current user to attach blog
+  //   await api
+  //     .post('/api/users')
+  //     .send(newUser)
+  //     .expect(200)
+  //     .expect('Content-Type', /application\/json/)
+
+  //   const usersAtEnd = await helper.usersInDb()
+  //   expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+
+  //   const usernames = usersAtEnd.map((u) => u.username)
+  //   expect(usernames).toContain(newUser.username)
+  // })
   test('creation fails with proper statuscode and message if username already taken', async () => {
     const usersAtStart = await helper.usersInDb()
 

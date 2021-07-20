@@ -22,6 +22,12 @@ const usersInDb = async () => {
   return users.map((u) => u.toJSON())
 }
 
+const testUser = {
+  username: 'root',
+  name: 'iamroot',
+  password: 'sekret',
+}
+
 const firstUser = async () => {
   const users = await usersInDb()
 
@@ -34,4 +40,5 @@ module.exports = {
   blogsInDb,
   usersInDb,
   firstUser,
+  testUser,
 }

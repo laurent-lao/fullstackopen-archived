@@ -12,4 +12,13 @@ Content-Type: application/json
 }
 
 ###
+POST http://localhost:3003/api/login/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "root",
+    "password": "salainen"
+}
+
+###
 DELETE http://localhost:3003/api/users/60f3d3e5da6664a92ca9fbfd
