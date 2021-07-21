@@ -23,20 +23,11 @@ blogsRouter.get('/:id', async (request, response) => {
     : response.status(404).end()
 })
 
-const getTokenFrom = (request) => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7)
-  }
-  return null
-}
-
 // Post one blog
 // eslint-disable-next-line no-unused-vars
 blogsRouter.post('/', async (request, response) => {
-  const { body } = request
+  const { body, token } = request
 
-  const token = getTokenFrom(request)
   const decodedToken = jwt.verify(token, process.env.SECRET)
   if (!token || !decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' })

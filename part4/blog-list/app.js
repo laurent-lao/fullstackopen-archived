@@ -20,11 +20,15 @@ mongoose.connect(mongoUrl, {
 app.use(cors())
 app.use(express.json())
 
-app.use('/api/blogs', blogsRouter)
-app.use('/api/login', loginRouter) //
+// Middlewares
+app.use(middleware.tokenExtractor)
 
+// Routes
+app.use('/api/blogs', blogsRouter)
+app.use('/api/login', loginRouter)
 app.use('/api/users', usersRouter)
 
+// Must be last loaded middleware
 app.use(middleware.errorHandler)
 
 module.exports = app
