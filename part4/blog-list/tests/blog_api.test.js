@@ -229,7 +229,7 @@ describe('addition of a blog', () => {
       .post('/api/blogs')
       .set({ Authorization: header })
       .send(newBlog)
-      .expect(500)
+      .expect(401)
   })
 })
 
