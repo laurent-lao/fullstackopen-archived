@@ -39,22 +39,36 @@ describe('when there is initially one user in db', () => {
     expect(usernames).toContain(newUser.username)
   })
   // TODO
-  // test('blogs can be attached and field is populated', async () => {
-  //   const usersAtStart = await helper.usersInDb()
+  test('blogs can be attached and field is populated', async () => {
+    const testUser = await helper.firstUser()
 
-  //   // use current user to attach blog
-  //   await api
-  //     .post('/api/users')
-  //     .send(newUser)
-  //     .expect(200)
-  //     .expect('Content-Type', /application\/json/)
+    // use current user to attach blog
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Test Author',
+      url: 'http://testurl.com/',
+      likes: 2,
+      userId: testUser.id,
+    }
 
-  //   const usersAtEnd = await helper.usersInDb()
-  //   expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
 
-  //   const usernames = usersAtEnd.map((u) => u.username)
-  //   expect(usernames).toContain(newUser.username)
-  // })
+    const getPopulatedFieldsOfFirstBlogInUser = async () => {
+      const response = await api.get('/api/users')
+      const allUsers = response.body
+      const firstUser = allUsers[0]
+
+      return firstUser.blogs[0]
+    }
+
+    const shouldBePopulated = await getPopulatedFieldsOfFirstBlogInUser()
+
+    expect(shouldBePopulated.url).toEqual(newBlog.url)
+    expect(shouldBePopulated.title).toEqual(newBlog.title)
+    expect(shouldBePopulated.author).toEqual(newBlog.author)
+  })
   test('creation fails with proper statuscode and message if username already taken', async () => {
     const usersAtStart = await helper.usersInDb()
 
