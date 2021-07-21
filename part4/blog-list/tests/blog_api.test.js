@@ -210,8 +210,6 @@ describe('addition of a blog', () => {
     expect(lastAddedBlog.user.toString()).toEqual(testUser.id)
   })
   test('fails without a valid token', async () => {
-    const testUser = await helper.firstUser()
-
     const newBlog = {
       title: 'Test Blog',
       author: 'Test Author',
