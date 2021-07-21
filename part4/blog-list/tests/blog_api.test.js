@@ -92,7 +92,7 @@ describe('addition of a blog', () => {
     await User.deleteMany({})
 
     const passwordHash = await bcrypt.hash(helper.testUser.password, 10)
-    const user = new User({ 
+    const user = new User({
       username: helper.testUser.username,
       name: helper.testUser.name,
       passwordHash,
@@ -111,8 +111,12 @@ describe('addition of a blog', () => {
       userId: testUser.id,
     }
 
+    const token = await helper.getTestTokenFromApi(api)
+    const header = helper.formatAuthHeaderFromToken(token)
+
     await api
       .post('/api/blogs')
+      .set({ Authorization: header })
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -148,8 +152,12 @@ describe('addition of a blog', () => {
       userId: testUser.id,
     }
 
+    const token = await helper.getTestTokenFromApi(api)
+    const header = helper.formatAuthHeaderFromToken(token)
+
     await api
       .post('/api/blogs')
+      .set({ Authorization: header })
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -166,13 +174,64 @@ describe('addition of a blog', () => {
       userId: testUser.id,
     }
 
+    const token = await helper.getTestTokenFromApi(api)
+    const header = helper.formatAuthHeaderFromToken(token)
+
     await api
       .post('/api/blogs')
+      .set({ Authorization: header })
       .send(newBlog)
       .expect(400)
 
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
+  test('assigns the token holder\'s id to the blog\'s user field', async () => {
+    const testUser = await helper.firstUser()
+
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Test Author',
+      url: 'http://testurl.com/',
+      likes: 2,
+    }
+
+    const token = await helper.getTestTokenFromApi(api)
+    const header = helper.formatAuthHeaderFromToken(token)
+
+    await api
+      .post('/api/blogs')
+      .set({ Authorization: header })
+      .send(newBlog)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const lastAddedBlog = blogsAtEnd[blogsAtEnd.length - 1]
+
+    expect(lastAddedBlog.user.toString()).toEqual(testUser.id)
+  })
+  test('fails without a valid token', async () => {
+    const testUser = await helper.firstUser()
+
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Test Author',
+      url: 'http://testurl.com/',
+      likes: 2,
+    }
+
+    const setCharAt = (string, index, char) => (index > (string.length - 1)
+      ? string
+      : string.substring(0, index) + char + string.substring(index + 1))
+
+    const goodToken = await helper.getTestTokenFromApi(api)
+    const badToken = setCharAt(goodToken, goodToken.length / 2, '.')
+    const header = helper.formatAuthHeaderFromToken(badToken)
+
+    await api
+      .post('/api/blogs')
+      .set({ Authorization: header })
+      .send(newBlog)
+      .expect(500)
   })
 })
 

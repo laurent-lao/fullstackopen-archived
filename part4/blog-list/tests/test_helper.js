@@ -34,6 +34,25 @@ const firstUser = async () => {
   return users[0]
 }
 
+const testTokenRequest = {
+  username: testUser.username,
+  password: testUser.password,
+}
+
+const getTestTokenFromApi = async (api) => {
+  const resultToken = await api
+    .post('/api/login')
+    .send(testTokenRequest)
+
+  return resultToken.body.token
+}
+
+const formatAuthHeaderFromToken = (token) => {
+  const scheme = 'bearer'
+
+  return scheme.concat(' ', token)
+}
+
 module.exports = {
   initialBlogs,
   nonExistingId,
@@ -41,4 +60,7 @@ module.exports = {
   usersInDb,
   firstUser,
   testUser,
+  getTestTokenFromApi,
+  formatAuthHeaderFromToken,
+  testTokenRequest,
 }

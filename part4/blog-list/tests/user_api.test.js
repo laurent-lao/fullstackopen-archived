@@ -51,11 +51,15 @@ describe('when there is initially one user in db', () => {
       userId: testUser.id,
     }
 
+    const token = await helper.getTestTokenFromApi(api)
+    const header = helper.formatAuthHeaderFromToken(token)
+
     await api
       .post('/api/blogs')
+      .set({ Authorization: header })
       .send(newBlog)
 
-    const getPopulatedFieldsOfFirstBlogInUser = async () => {
+    const getPopulatedFields = async () => {
       const response = await api.get('/api/users')
       const allUsers = response.body
       const firstUser = allUsers[0]
@@ -63,7 +67,7 @@ describe('when there is initially one user in db', () => {
       return firstUser.blogs[0]
     }
 
-    const shouldBePopulated = await getPopulatedFieldsOfFirstBlogInUser()
+    const shouldBePopulated = await getPopulatedFields()
 
     expect(shouldBePopulated.url).toEqual(newBlog.url)
     expect(shouldBePopulated.title).toEqual(newBlog.title)
