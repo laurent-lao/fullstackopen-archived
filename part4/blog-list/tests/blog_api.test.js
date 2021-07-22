@@ -130,6 +130,7 @@ describe('addition of a blog', () => {
 
     await user.save()
   })
+
   test('succeeds with valid data', async () => {
     const testUser = await helper.firstUser()
 
@@ -239,7 +240,20 @@ describe('addition of a blog', () => {
 
     expect(lastAddedBlog.user.toString()).toEqual(testUser.id)
   })
-  test('fails without a valid token', async () => {
+  test('fails without a token', async () => {
+    const newBlog = {
+      title: 'Test Blog',
+      author: 'Test Author',
+      url: 'http://testurl.com/',
+      likes: 2,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+  })
+  test('fails with an invalid token', async () => {
     const newBlog = {
       title: 'Test Blog',
       author: 'Test Author',
