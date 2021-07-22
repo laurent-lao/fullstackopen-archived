@@ -22,9 +22,11 @@ app.use(express.json())
 
 // Middlewares
 app.use(middleware.tokenExtractor)
+// app.use(middleware.userExtractor) // for every routes (right now just for post/delete)
 
 // Routes
 app.use('/api/blogs', blogsRouter)
+// app.use('/api/blogs', middleware.userExtractor, blogsRouter) // to apply middleware to route
 app.use('/api/login', loginRouter)
 app.use('/api/users', usersRouter)
 app.use(middleware.unknownEndpoint)
