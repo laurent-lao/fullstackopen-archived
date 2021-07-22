@@ -1,5 +1,11 @@
 const logger = require('./logger')
 
+// Middleware do operations on request, response and needs next() to work
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
 const errorHandler = (error, request, response, next) => {
   logger.info(error.message)
 
@@ -31,6 +37,7 @@ const tokenExtractor = (request, response, next) => {
 }
 
 module.exports = {
+  unknownEndpoint,
   errorHandler,
   tokenExtractor,
 }

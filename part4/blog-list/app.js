@@ -27,6 +27,7 @@ app.use(middleware.tokenExtractor)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/users', usersRouter)
+app.use(middleware.unknownEndpoint)
 
 // Must be last loaded middleware
 app.use(middleware.errorHandler)

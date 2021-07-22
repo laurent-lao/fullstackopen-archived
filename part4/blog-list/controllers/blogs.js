@@ -67,9 +67,21 @@ blogsRouter.put('/:id', async (request, response) => {
 
 // Delete one blog
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id)
+  const { token } = request
 
-  response.status(204).end()
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+  if (!token || !decodedToken.id) {
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+  const user = await User.findById(decodedToken.id)
+  const blog = await Blog.findById(request.params.id)
+
+  if (blog.user.toString() === user.id.toString()) {
+    await Blog.findByIdAndRemove(request.params.id)
+    return response.status(204).end()
+  }
+
+  return response.status(403).json({ error: 'token does not have ownership' })
 })
 
 // ========= By Promises ============
