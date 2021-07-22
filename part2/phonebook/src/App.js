@@ -39,13 +39,16 @@ const App = () => {
       id: persons.length + 1
     }
     const duplicatePerson = persons.find(person => person.name === personObject.name)
-
+    
     if (!duplicatePerson) {
       personService
         .create(personObject)
         .then(returnedNote => {
           setPersons(persons.concat(returnedNote))  // Satisfies "Never mutate state directly"
           showNotification(`Added ${personObject.name}`, false)
+        })
+        .catch(error => {
+          showNotification(error.response.data.error, true)
         })
     }
     else {
@@ -57,6 +60,9 @@ const App = () => {
           .then(returnedPerson => {
             setPersons(persons.map(person => person.name !== personObject.name ? person : returnedPerson))
             showNotification(`Replaced ${duplicatePerson.name}`, false)
+          })
+          .catch(error => {
+            showNotification(error.response.data.error, true)
           })
 
       }
